@@ -1,0 +1,98 @@
+{
+    "menu": [
+        {
+            "name": "Торт",
+            "price": 100.0,
+            "category": "закуска",
+            "ingredients": {
+                "Мука": 1,
+                "Молоко": 1,
+                "Яйцо": 2
+            },
+            "discount": 10.0
+        },
+        {
+            "name": "тост",
+            "price": 20.0,
+            "category": "закуска",
+            "ingredients": {
+                "хлеб": 2
+            },
+            "discount": 0
+        }
+    ],
+    "employees": [
+        {
+            "name": "Тестовый сотрудник",
+            "position": "Бармен",
+            "salary": 7500.0,
+            "bonus": 0
+        },
+        {
+            "name": "Директор",
+            "position": "Директор",
+            "salary": 7500.0,
+            "bonus": 0
+        }
+    ],
+    "positions": [
+        {
+            "name": "Директор",
+            "default_salary": 100000.0
+        },
+        {
+            "name": "Бармен",
+            "default_salary": 20000.0
+        },
+        {
+            "name": "Стажер",
+            "default_salary": 7500.0
+        }
+    ],
+    "default_position": {
+        "name": "Стажер",
+        "default_salary": 7500.0
+    },
+    "order_acceptance_position": {
+        "name": "Бармен",
+        "default_salary": 20000.0
+    },
+    "inventory": [
+        {
+            "name": "молоко",
+            "quantity": 100
+        },
+        {
+            "name": "яйцо",
+            "quantity": 50
+        },
+        {
+            "name": "сахар",
+            "quantity": 100
+        },
+        {
+            "name": "соль",
+            "quantity": 40
+        },
+        {
+            "name": "хлеб",
+            "quantity": -2
+        },
+        {
+            "name": "мука",
+            "quantity": 100
+        }
+    ],
+    "regular_customers": [],
+    "orders": [
+        {
+            "order_id": 1,
+            "employee_name": "Тестовый сотрудник",
+            "items": {
+                "тост": 2
+            },
+            "status": "closed",
+            "created_at": "2025-03-04 22:56:56"
+        }
+    ]
+}
