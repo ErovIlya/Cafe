@@ -11,6 +11,7 @@ def print_drinks_menu():
     print("5) Список напитков")
     print("0) Назад")
 
+
 def handle_drinks_menu(cafe: Cafe):
     while True:
         print_drinks_menu()
@@ -36,9 +37,36 @@ def handle_drinks_menu(cafe: Cafe):
             print("Напиток добавлен!")
 
         elif choice == "2":
-            name = input("Введите название напитка для удаления: ").strip().lower()
-            cafe.remove_menu_item(name)
-            print("Напиток удалён!")
+            print("\nСписок напитков:")
+            headers = ["№", "Название", "Цена", "Скидка", "С учётом скидки", "Доступно"]
+            rows = []
+            for i, item in enumerate(cafe.menu, start=1):
+                if item.category == "напиток":
+                    available = True
+                    for ingredient, required_quantity in item.ingredients.items():
+                        inventory_item = next((inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower()),
+                                              None)
+                        if not inventory_item or inventory_item.quantity < required_quantity:
+                            available = False
+                            break
+                    price_with_discount = item.price * (1 - item.discount / 100)
+                    rows.append([i, item.name, item.price, f"{item.discount}%", f"{price_with_discount:.2f}",
+                                 "Да" if available else "Нет"])
+            print_table(headers, rows)
+
+            try:
+                item_number = int(input("Введите номер напитка для удаления: "))
+                if 1 <= item_number <= len(cafe.menu):
+                    item_to_remove = cafe.menu[item_number - 1]
+                    if item_to_remove.category == "напиток":
+                        cafe.remove_menu_item(item_to_remove.name)
+                        print(f"Напиток '{item_to_remove.name}' удалён.")
+                    else:
+                        print_error("Выбранный объект не является напитком.")
+                else:
+                    print_error("Неверный номер напитка.")
+            except ValueError:
+                print_error("Введите корректный номер.")
 
         elif choice == "3":
             print("\nСписок напитков без скидки:")

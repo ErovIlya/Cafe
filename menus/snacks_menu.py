@@ -2,6 +2,7 @@ from models.cafe import Cafe
 from models.menu_item import MenuItem
 from utils.display_utils import print_table, print_error
 
+
 def print_snacks_menu():
     print("\nМеню 'Закуски':")
     print("1) Добавить 'Закуску'")
@@ -10,6 +11,7 @@ def print_snacks_menu():
     print("4) Снять скидку с Закуски")
     print("5) Список закусок")
     print("0) Назад")
+
 
 def handle_snacks_menu(cafe: Cafe):
     while True:
@@ -36,9 +38,36 @@ def handle_snacks_menu(cafe: Cafe):
             print("Закуска добавлена!")
 
         elif choice == "2":
-            name = input("Введите название закуски для удаления: ").strip().lower()
-            cafe.remove_menu_item(name)
-            print("Закуска удалена!")
+            print("\nСписок закусок:")
+            headers = ["№", "Название", "Цена", "Скидка", "С учётом скидки", "Доступно"]
+            rows = []
+            for i, item in enumerate(cafe.menu, start=1):
+                if item.category == "закуска":
+                    available = True
+                    for ingredient, required_quantity in item.ingredients.items():
+                        inventory_item = next((inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower()),
+                                              None)
+                        if not inventory_item or inventory_item.quantity < required_quantity:
+                            available = False
+                            break
+                    price_with_discount = item.price * (1 - item.discount / 100)
+                    rows.append([i, item.name, item.price, f"{item.discount}%", f"{price_with_discount:.2f}",
+                                 "Да" if available else "Нет"])
+            print_table(headers, rows)
+
+            try:
+                item_number = int(input("Введите номер закуски для удаления: "))
+                if 1 <= item_number <= len(cafe.menu):
+                    item_to_remove = cafe.menu[item_number - 1]
+                    if item_to_remove.category == "закуска":
+                        cafe.remove_menu_item(item_to_remove.name)
+                        print(f"Закуска '{item_to_remove.name}' удалена.")
+                    else:
+                        print_error("Выбранный объект не является закуской.")
+                else:
+                    print_error("Неверный номер закуски.")
+            except ValueError:
+                print_error("Введите корректный номер.")
 
         elif choice == "3":
             print("\nСписок закусок без скидки:")

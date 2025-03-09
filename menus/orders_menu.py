@@ -1,7 +1,8 @@
 from datetime import datetime
-
 from models.order import Order
 from utils.display_utils import print_table, print_error
+from utils.StatePositionMenu import StatePositionMenu
+
 
 def print_orders_menu():
     print("\nМеню 'Заказы':")
@@ -11,43 +12,61 @@ def print_orders_menu():
     print("4) Принять заказ")
     print("0) Назад")
 
-def handle_orders_menu(cafe):
-    while True:
-        print_orders_menu()
-        choice = input("Выберите пункт меню: ")
 
-        if choice == "1":
+def handle_orders_menu(cafe):
+    state_manager = StatePositionMenu()
+
+    while state_manager.get_state() != StatePositionMenu.State.EXIT:
+        if state_manager.get_state() == StatePositionMenu.State.MAIN_MENU:
+            print_orders_menu()
+            choice = input("Выберите пункт меню: ")
+
+            if choice == "1":
+                state_manager.set_state(StatePositionMenu.State.VIEW_TODAY_ORDERS)
+            elif choice == "2":
+                state_manager.set_state(StatePositionMenu.State.VIEW_ACTIVE_ORDERS)
+            elif choice == "3":
+                state_manager.set_state(StatePositionMenu.State.CLOSE_ORDER)
+            elif choice == "4":
+                state_manager.set_state(StatePositionMenu.State.ACCEPT_ORDER)
+            elif choice == "0":
+                state_manager.set_state(StatePositionMenu.State.EXIT)
+            else:
+                print("Неверный выбор. Попробуйте снова.")
+
+        elif state_manager.get_state() == StatePositionMenu.State.VIEW_TODAY_ORDERS:
             print("\nСписок заказов за сегодня:")
             today_orders = [order for order in cafe.orders if order.created_at.date() == datetime.now().date()]
             headers = ["ID", "Сотрудник", "Заказы", "Статус", "Время создания"]
             rows = [[order.order_id, order.employee_name, order.items, order.status, order.created_at.strftime("%H:%M:%S")] for order in today_orders]
             print_table(headers, rows)
+            state_manager.set_state(StatePositionMenu.State.MAIN_MENU)
 
-        elif choice == "2":
+        elif state_manager.get_state() == StatePositionMenu.State.VIEW_ACTIVE_ORDERS:
             print("\nСписок действующих заказов:")
             active_orders = [order for order in cafe.orders if order.status == "open"]
             headers = ["ID", "Сотрудник", "Заказы", "Время создания"]
             rows = [[order.order_id, order.employee_name, order.items, order.created_at.strftime("%H:%M:%S")] for order in active_orders]
             print_table(headers, rows)
+            state_manager.set_state(StatePositionMenu.State.MAIN_MENU)
 
-        elif choice == "3":
-            # Вывод списка действующих заказов
+        elif state_manager.get_state() == StatePositionMenu.State.CLOSE_ORDER:
             print("\nСписок действующих заказов:")
             active_orders = [order for order in cafe.orders if order.status == "open"]
             if not active_orders:
                 print("Нет действующих заказов.")
+                state_manager.set_state(StatePositionMenu.State.MAIN_MENU)
                 continue
+            complete_order(cafe)
 
             headers = ["ID", "Сотрудник", "Заказы", "Время создания"]
             rows = [[order.order_id, order.employee_name, order.items, order.created_at.strftime("%H:%M:%S")] for order in active_orders]
             print_table(headers, rows)
 
-            # Ввод ID заказа для завершения
             try:
                 order_id = int(input("Введите ID заказа для завершения: "))
                 order_to_close = next((order for order in active_orders if order.order_id == order_id), None)
                 if order_to_close:
-                    # Вывод подробной информации о заказе
                     print("\nПодробная информация о заказе:")
                     print(f"ID заказа: {order_to_close.order_id}")
                     print(f"Сотрудник: {order_to_close.employee_name}")
@@ -56,7 +75,6 @@ def handle_orders_menu(cafe):
                         print(f"- {item}: {quantity} шт.")
                     print(f"Время создания: {order_to_close.created_at.strftime('%Y-%m-%d %H:%M:%S')}")
 
-                    # Запрос подтверждения на завершение заказа
                     confirm = input("Вы уверены, что хотите завершить этот заказ? (да/нет): ").lower()
                     if confirm == "да":
                         order_to_close.status = "closed"
@@ -67,17 +85,44 @@ def handle_orders_menu(cafe):
                     print_error("Заказ с таким ID не найден.")
             except ValueError:
                 print_error("Введите корректный ID заказа.")
+            state_manager.set_state(StatePositionMenu.State.MAIN_MENU)
 
-        elif choice == "4":
+        elif state_manager.get_state() == StatePositionMenu.State.ACCEPT_ORDER:
             accept_order(cafe)
+            state_manager.set_state(StatePositionMenu.State.MAIN_MENU)
 
-        elif choice == "0":
+        elif state_manager.get_state() == StatePositionMenu.State.EXIT:
+            print("Выход из меню заказов.")
             break
 
-        else:
-            print("Неверный выбор. Попробуйте снова.")
 
 def accept_order(cafe):
+    """Принятие заказа"""
+    client_name = input("Введите имя клиента: ").strip()
+    if not client_name:
+        print_error("Имя клиента не может быть пустым.")
+        return
+
+    client_exists = False
+    for client in cafe.regular_customers:
+        if client["name"].lower() == client_name.lower():
+            client_exists = True
+            print(f"Клиент '{client_name}' уже существует. Данные будут обновлены.")
+            client["last_visit_date"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            break
+
+    if not client_exists:
+        client_data = {
+            "name": client_name,
+            "total_spent": 0,
+            "last_visit_date": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "total_orders": 0,
+            "drinks_ordered": 0,
+            "snacks_ordered": 0
+        }
+        cafe.regular_customers.append(client_data)
+        print(f"Клиент '{client_name}' добавлен в базу.")
+
     # Проверка наличия сотрудников с должностью для принятия заказов
     if not cafe.order_acceptance_position:
         print_error("Должность для принятия заказов не задана.")
@@ -175,7 +220,7 @@ def accept_order(cafe):
 
     # Создание заказа и списание ингредиентов
     order_id = len(cafe.orders) + 1
-    new_order = Order(order_id, employee_name, items)
+    new_order = Order(order_id, employee_name, items, client_name)
     cafe.orders.append(new_order)
 
     for item_name, quantity in items.items():
@@ -184,4 +229,57 @@ def accept_order(cafe):
             inventory_item = next(inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower())
             inventory_item.quantity -= required_quantity * quantity
 
+    if client_exists:
+        # Находим клиента и обновляем его данные
+        for client in cafe.regular_customers:
+            if client["name"].lower() == client_name.lower():
+                break
+
     print(f"Заказ #{order_id} принят.")
+
+
+def complete_order(cafe):
+    active_orders = [order for order in cafe.orders if order.status == "open"]
+    if not active_orders:
+        print("Нет действующих заказов.")
+        return
+
+    print("\nСписок действующих заказов:")
+    headers = ["ID", "Сотрудник", "Клиент", "Заказы", "Время создания"]
+    rows = [[order.order_id, order.employee_name, order.client_name, order.items,
+             order.created_at.strftime("%Y-%m-%d %H:%M:%S")] for order in active_orders]
+    print_table(headers, rows)
+
+    try:
+        order_id = int(input("Введите ID заказа для завершения: "))
+        order_to_close = next((order for order in active_orders if order.order_id == order_id), None)
+        if not order_to_close:
+            print_error("Заказ с таким ID не найден.")
+            return
+
+        # Находим клиента, который сделал заказ
+        client_name = order_to_close.client_name
+        for client in cafe.regular_customers:
+            if client["name"].lower() == client_name.lower():
+                # Обновляем данные клиента
+                total = order_to_close.calculate_total(cafe.menu)
+                client["total_spent"] += total
+                client["total_orders"] += 1
+
+                # Подсчет количества напитков и закусок
+                for item_name, quantity in order_to_close.items.items():
+                    menu_item = next(item for item in cafe.menu if item.name == item_name)
+                    if menu_item.category == "напиток":
+                        client["drinks_ordered"] += quantity
+                    elif menu_item.category == "закуска":
+                        client["snacks_ordered"] += quantity
+
+                print(f"Данные клиента '{client_name}' обновлены после завершения заказа.")
+                break
+
+        # Помечаем заказ как завершенный
+        order_to_close.status = "closed"
+        print(f"Заказ #{order_id} завершён.")
+
+    except ValueError:
+        print_error("Введите корректный ID заказа.")

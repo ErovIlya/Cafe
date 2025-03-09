@@ -2,11 +2,13 @@ from models.employee import Employee
 from models.position import Position
 from utils.display_utils import print_table, print_error
 
+
 def print_staff_menu():
     print("\nМеню персонала:")
     print("1) Должности")
     print("2) Персонал")
     print("0) Назад")
+
 
 def handle_staff_menu(cafe):
     while True:
@@ -25,6 +27,7 @@ def handle_staff_menu(cafe):
         else:
             print("Неверный выбор. Попробуйте снова.")
 
+
 def print_positions_menu():
     print("\nМеню 'Должности':")
     print("1) Список должностей")
@@ -33,6 +36,7 @@ def print_positions_menu():
     print("4) Зарплата")
     print("5) Должность для принятия заказов")
     print("0) Назад")
+
 
 def handle_positions_menu(cafe):
     while True:
@@ -131,6 +135,7 @@ def handle_positions_menu(cafe):
         else:
             print("Неверный выбор. Попробуйте снова.")
 
+
 def print_employees_menu():
     print("\nМеню 'Персонал':")
     print("1) Список персонала")
@@ -140,6 +145,7 @@ def print_employees_menu():
     print("5) Уволить сотрудника")
     print("6) Выплата ЗП")
     print("0) Назад")
+
 
 def handle_employees_menu(cafe):
     while True:

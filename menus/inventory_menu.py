@@ -2,12 +2,14 @@ from models.cafe import Cafe
 from models.inventory_item import InventoryItem
 from utils.display_utils import print_table, print_error
 
+
 def print_inventory_menu():
     print("\nМеню инвентаря:")
     print("1) Просмотреть инвентарь")
     print("2) Добавить ингредиент")
     print("3) Списать ингредиент")
     print("0) Назад")
+
 
 def handle_inventory_menu(cafe: Cafe):
     while True:

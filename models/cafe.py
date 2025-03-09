@@ -66,6 +66,7 @@ class Cafe:
                 order_id=order_data["order_id"],
                 employee_name=order_data["employee_name"],
                 items=order_data["items"],
+                client_name=order_data["client_name"],
                 status=order_data["status"]
             )
             cafe.orders.append(order)
