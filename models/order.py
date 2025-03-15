@@ -18,10 +18,10 @@ class Order:
             "items": self.items,
             "client_name": self.client_name,
             "status": self.status,
-            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S")  # Сохраняем как строку
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S")
         }
 
-    def calculate_total(self, menu: list['MenuItem']) -> float:
+    def calculate_total(self, menu: list[MenuItem]) -> float:
         total = 0
         for item_name, quantity in self.items.items():
             for menu_item in menu:

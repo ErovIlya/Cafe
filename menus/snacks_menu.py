@@ -27,7 +27,12 @@ def handle_snacks_menu(cafe: Cafe):
                 if ingredient == "":
                     break
                 # Проверка наличия ингредиента
-                inventory_item = next((item for item in cafe.inventory if item.name.lower() == ingredient), None)
+                inventory_item = None
+                for inv in cafe.inventory:
+                    if inv.name.lower() == ingredient.lower():
+                        inventory_item = inv
+                        break
+
                 if not inventory_item:
                     print_error(f"Ингредиент '{ingredient}' отсутствует на складе. Ввод прекращён.")
                     return  # Прекращаем ввод и возвращаемся в меню
@@ -45,8 +50,12 @@ def handle_snacks_menu(cafe: Cafe):
                 if item.category == "закуска":
                     available = True
                     for ingredient, required_quantity in item.ingredients.items():
-                        inventory_item = next((inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower()),
-                                              None)
+                        inventory_item = None
+                        for inv in cafe.inventory:
+                            if inv.name.lower() == ingredient.lower():
+                                inventory_item = inv
+                                break
+
                         if not inventory_item or inventory_item.quantity < required_quantity:
                             available = False
                             break
@@ -114,7 +123,12 @@ def handle_snacks_menu(cafe: Cafe):
                 if item.category == "закуска":
                     available = True
                     for ingredient, required_quantity in item.ingredients.items():
-                        inventory_item = next((inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower()), None)
+                        inventory_item = None
+                        for inv in cafe.inventory:
+                            if inv.name.lower() == ingredient.lower():
+                                inventory_item = inv
+                                break
+
                         if not inventory_item or inventory_item.quantity < required_quantity:
                             available = False
                             break

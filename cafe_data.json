@@ -60,11 +60,11 @@
     "inventory": [
         {
             "name": "молоко",
-            "quantity": 94
+            "quantity": 84
         },
         {
             "name": "яйцо",
-            "quantity": 38
+            "quantity": 18
         },
         {
             "name": "сахар",
@@ -80,14 +80,14 @@
         },
         {
             "name": "мука",
-            "quantity": 94
+            "quantity": 84
         }
     ],
     "regular_customers": [
         {
             "name": "Тест",
             "total_spent": 400.0,
-            "last_visit_date": "2025-03-09 12:15:58",
+            "last_visit_date": "2025-03-10 10:03:01",
             "total_orders": 3,
             "drinks_ordered": 0,
             "snacks_ordered": 4
@@ -102,7 +102,7 @@
             },
             "client_name": "Тест",
             "status": "closed",
-            "created_at": "2025-03-09 13:44:49"
+            "created_at": "2025-03-10 10:02:50"
         },
         {
             "order_id": 2,
@@ -112,7 +112,17 @@
             },
             "client_name": "Тест",
             "status": "closed",
-            "created_at": "2025-03-09 13:44:49"
+            "created_at": "2025-03-10 10:02:50"
+        },
+        {
+            "order_id": 3,
+            "employee_name": "Тестовый сотрудник",
+            "items": {
+                "Торт": 10
+            },
+            "client_name": "Тест",
+            "status": "open",
+            "created_at": "2025-03-10 10:03:16"
         }
     ]
 }

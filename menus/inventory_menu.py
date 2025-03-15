@@ -26,7 +26,12 @@ def handle_inventory_menu(cafe: Cafe):
             name = input("Введите название ингредиента: ").strip().lower()
             quantity = int(input("Введите количество: "))
             # Проверка, существует ли уже такой ингредиент
-            existing_item = next((item for item in cafe.inventory if item.name.lower() == name), None)
+            existing_item = None
+            for inv in cafe.inventory:
+                if inv.name.lower() == name:
+                    existing_item = inv
+                    break
+
             if existing_item:
                 existing_item.add_quantity(quantity)
                 print(f"Количество ингредиента '{name}' увеличено на {quantity}.")

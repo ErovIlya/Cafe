@@ -65,7 +65,12 @@ def handle_orders_menu(cafe):
 
             try:
                 order_id = int(input("Введите ID заказа для завершения: "))
-                order_to_close = next((order for order in active_orders if order.order_id == order_id), None)
+                order_to_close = None
+                for order in active_orders:
+                    if order.order_id == order_id:
+                        order_to_close = order
+                        break
+
                 if order_to_close:
                     print("\nПодробная информация о заказе:")
                     print(f"ID заказа: {order_to_close.order_id}")
@@ -158,7 +163,12 @@ def accept_order(cafe):
         for i, item in enumerate(cafe.menu, start=1):
             available = True
             for ingredient, required_quantity in item.ingredients.items():
-                inventory_item = next((inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower()), None)
+                inventory_item = None
+                for inv in cafe.inventory:
+                    if inv.name.lower() == ingredient.lower():
+                        inventory_item = inv
+                        break
+
                 if not inventory_item or inventory_item.quantity < required_quantity:
                     available = False
                     break
@@ -174,7 +184,12 @@ def accept_order(cafe):
                 # Проверка наличия ингредиентов
                 missing_ingredients = []
                 for ingredient, required_quantity in menu_item.ingredients.items():
-                    inventory_item = next((inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower()), None)
+                    inventory_item = None
+                    for inv in cafe.inventory:
+                        if inv.name.lower() == ingredient.lower():
+                            inventory_item = inv
+                            break
+
                     if not inventory_item or inventory_item.quantity < required_quantity:
                         missing_ingredients.append(ingredient)
 
@@ -189,7 +204,12 @@ def accept_order(cafe):
 
                 # Проверка наличия ингредиентов с учетом количества
                 for ingredient, required_quantity in menu_item.ingredients.items():
-                    inventory_item = next(inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower())
+                    inventory_item = None
+                    for inv in cafe.inventory:
+                        if inv.name.lower() == ingredient.lower():
+                            inventory_item = inv
+                            break
+
                     if inventory_item.quantity < required_quantity * quantity:
                         print_error(f"Недостаточно ингредиента '{ingredient}' на складе.")
                         break
@@ -224,9 +244,18 @@ def accept_order(cafe):
     cafe.orders.append(new_order)
 
     for item_name, quantity in items.items():
-        menu_item = next(item for item in cafe.menu if item.name == item_name)
+        menu_item = None
+        for item in cafe.menu:
+            if item.name.lower() == item_name.lower():
+                menu_item = item
+                break
+
         for ingredient, required_quantity in menu_item.ingredients.items():
-            inventory_item = next(inv for inv in cafe.inventory if inv.name.lower() == ingredient.lower())
+            inventory_item = None
+            for inv in cafe.inventory:
+                if inv.name.lower() == ingredient.lower():
+                    inventory_item = inv
+                    break
             inventory_item.quantity -= required_quantity * quantity
 
     if client_exists:
@@ -252,7 +281,12 @@ def complete_order(cafe):
 
     try:
         order_id = int(input("Введите ID заказа для завершения: "))
-        order_to_close = next((order for order in active_orders if order.order_id == order_id), None)
+        order_to_close = None
+        for order in active_orders:
+            if order.order_id == order_id:
+                order_to_close = order
+                break
+
         if not order_to_close:
             print_error("Заказ с таким ID не найден.")
             return
@@ -268,7 +302,12 @@ def complete_order(cafe):
 
                 # Подсчет количества напитков и закусок
                 for item_name, quantity in order_to_close.items.items():
-                    menu_item = next(item for item in cafe.menu if item.name == item_name)
+                    menu_item = None
+                    for inv in cafe.menu:
+                        if inv.name.lower() == item_name:
+                            menu_item = inv
+                            break
+
                     if menu_item.category == "напиток":
                         client["drinks_ordered"] += quantity
                     elif menu_item.category == "закуска":

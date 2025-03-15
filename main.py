@@ -98,5 +98,6 @@ def main():
     save_data(cafe, filename)
     print("Данные сохранены. Выход из программы.")
 
+
 if __name__ == "__main__":
     main()

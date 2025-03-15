@@ -8,14 +8,14 @@ from models.inventory_item import InventoryItem
 
 class Cafe:
     def __init__(self):
-        self.menu: List[MenuItem] = []
-        self.employees: List[Employee] = []
-        self.positions: List[Position] = []
+        self.menu: list[MenuItem] = []
+        self.employees: list[Employee] = []
+        self.positions: list[Position] = []
         self.default_position: Position = None
         self.order_acceptance_position: Position = None
-        self.inventory: List[InventoryItem] = []
-        self.regular_customers: List[Dict] = []
-        self.orders: List[Order] = []
+        self.inventory: list[InventoryItem] = []
+        self.regular_customers: list[dict] = []
+        self.orders: list[Order] = []
 
     def add_menu_item(self, item: MenuItem):
         """Добавляет новую позицию в меню."""
